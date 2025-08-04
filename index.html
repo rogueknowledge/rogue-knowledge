@@ -302,12 +302,20 @@
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+            width: 100%;
+            position: relative;
         }
 
-        .submit-btn:hover {
+        .submit-btn:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
             background: #FFFF88;
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
         }
 
         /* Success message */
@@ -327,6 +335,23 @@
             color: #90EE90;
         }
 
+        /* Error message */
+        .error-message {
+            background: rgba(255, 0, 0, 0.1);
+            border: 2px solid rgba(255, 0, 0, 0.3);
+            color: #ff6b6b;
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 2rem 0;
+            text-align: center;
+            display: none;
+        }
+
+        .error-message h3 {
+            margin-bottom: 1rem;
+            color: #ff6b6b;
+        }
+
         .copy-button {
             background: #90EE90;
             color: #043927;
@@ -342,19 +367,6 @@
         .copy-button:hover {
             transform: translateY(-1px);
             background: #98FB98;
-        }
-
-        .email-content {
-            background: rgba(0, 0, 0, 0.2);
-            padding: 1.5rem;
-            border-radius: 10px;
-            margin: 1rem 0;
-            font-family: monospace;
-            font-size: 0.9rem;
-            text-align: left;
-            white-space: pre-line;
-            max-height: 200px;
-            overflow-y: auto;
         }
 
         /* Footer */
@@ -640,21 +652,22 @@
                 <textarea id="why-curious" name="why-curious" rows="3" placeholder="What made you notice this? Why can't you let it go? (This helps me understand the angle to take)"></textarea>
             </div>
             
-            <button type="submit" class="submit-btn">Send My Question</button>
+            <button type="submit" class="submit-btn" id="submitBtn">
+                <span id="btnText">Send My Question</span>
+                <span id="btnLoader" style="display: none;">📧 Sending...</span>
+            </button>
         </form>
 
         <div class="success-message" id="successMessage">
-            <h3>📧 Your Message is Ready!</h3>
-            <p>Here's your formatted message. You can copy it and send it to me:</p>
-            
-            <div class="email-content" id="emailContent"></div>
-            
-            <button class="copy-button" onclick="copyEmailContent()">📋 Copy Message</button>
-            <button class="copy-button" onclick="openEmailClient()">📬 Open Email Client</button>
-            
-            <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.8;">
-                You can also manually copy the content above and paste it into your preferred email client.
-            </p>
+            <h3>✅ Message Sent Successfully!</h3>
+            <p>Your question has been sent directly to Rogue Knowledge. Thanks for your curiosity!</p>
+            <button class="copy-button" onclick="resetForm()">Send Another Question</button>
+        </div>
+
+        <div class="error-message" id="errorMessage">
+            <h3>❌ Oops! Something went wrong</h3>
+            <p id="errorText">Please try again or email directly to reiambrade@gmail.com</p>
+            <button class="copy-button" onclick="hideError()">Try Again</button>
         </div>
     </section>
 
@@ -667,6 +680,80 @@
     </footer>
 
     <script>
+        // Form submission handler
+        document.getElementById('contactForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+            const btnLoader = document.getElementById('btnLoader');
+            const successMessage = document.getElementById('successMessage');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // Show loading state
+            btnText.style.display = 'none';
+            btnLoader.style.display = 'inline';
+            submitBtn.disabled = true;
+            
+            // Hide previous messages
+            successMessage.style.display = 'none';
+            errorMessage.style.display = 'none';
+            
+            try {
+                // Get form data
+                const formData = new FormData(e.target);
+                const data = {
+                    name: formData.get('name'),
+                    email: formData.get('email'),
+                    topicType: formData.get('topic-type'),
+                    question: formData.get('question'),
+                    whyCurious: formData.get('why-curious')
+                };
+                
+                // Send to your Vercel API
+                const response = await fetch('/api/send-email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok && result.success) {
+                    // Success!
+                    successMessage.style.display = 'block';
+                    successMessage.scrollIntoView({ behavior: 'smooth' });
+                    e.target.reset(); // Clear form
+                } else {
+                    throw new Error(result.error || 'Failed to send email');
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('errorText').textContent = 
+                    error.message || 'Please try again or email directly to reiambrade@gmail.com';
+                errorMessage.style.display = 'block';
+                errorMessage.scrollIntoView({ behavior: 'smooth' });
+            } finally {
+                // Reset button state
+                btnText.style.display = 'inline';
+                btnLoader.style.display = 'none';
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Helper functions
+        function resetForm() {
+            document.getElementById('contactForm').reset();
+            document.getElementById('successMessage').style.display = 'none';
+        }
+
+        function hideError() {
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
         // Smooth scrolling for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
@@ -676,135 +763,6 @@
                 });
             });
         });
-
-        // Form submission handler
-        document.getElementById('contactForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Get form data
-            const formData = new FormData(e.target);
-            const data = {};
-            for (let [key, value] of formData.entries()) {
-                data[key] = value;
-            }
-            
-            // Generate email content
-            const emailSubject = `New Rogue Knowledge Question: ${data['topic-type'] || 'General Inquiry'}`;
-            const emailBody = generateEmailBody(data);
-            
-            // Display success message with email content
-            document.getElementById('emailContent').textContent = emailBody;
-            document.getElementById('successMessage').style.display = 'block';
-            
-            // Scroll to success message
-            document.getElementById('successMessage').scrollIntoView({ behavior: 'smooth' });
-            
-            // Update button text
-            const submitBtn = e.target.querySelector('.submit-btn');
-            submitBtn.textContent = 'Message Ready!';
-            setTimeout(() => {
-                submitBtn.textContent = 'Send My Question';
-            }, 3000);
-        });
-
-        // Generate email body function
-        function generateEmailBody(data) {
-            const currentDate = new Date().toLocaleDateString();
-            
-            let emailBody = `Subject: New Rogue Knowledge Question: ${data['topic-type'] || 'General Inquiry'}
-
-Hi there!
-
-I have a question/topic suggestion for Rogue Knowledge that I'd love for you to explore:
-
-📝 CONTACT INFO:
-Name: ${data.name}
-Email: ${data.email}
-Date: ${currentDate}
-
-🔍 QUESTION CATEGORY: 
-${data['topic-type'] || 'Not specified'}
-
-❓ MY QUESTION/TOPIC:
-${data.question}
-
-🤔 WHY I'M CURIOUS:
-${data['why-curious'] || 'Not specified'}
-
----
-
-Looking forward to seeing if this sparks your curiosity too!
-
-Best regards,
-${data.name}`;
-            
-            return emailBody;
-        }
-
-        // Copy email content to clipboard
-        function copyEmailContent() {
-            const emailContent = document.getElementById('emailContent').textContent;
-            
-            if (navigator.clipboard && window.isSecureContext) {
-                // Use modern clipboard API
-                navigator.clipboard.writeText(emailContent).then(() => {
-                    showCopyFeedback('📋 Copied to clipboard!');
-                }).catch(() => {
-                    fallbackCopyTextToClipboard(emailContent);
-                });
-            } else {
-                // Fallback for older browsers
-                fallbackCopyTextToClipboard(emailContent);
-            }
-        }
-
-        // Fallback copy method
-        function fallbackCopyTextToClipboard(text) {
-            const textArea = document.createElement("textarea");
-            textArea.value = text;
-            textArea.style.position = "fixed";
-            textArea.style.left = "-999999px";
-            textArea.style.top = "-999999px";
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
-            
-            try {
-                document.execCommand('copy');
-                showCopyFeedback('📋 Copied to clipboard!');
-            } catch (err) {
-                showCopyFeedback('❌ Please manually copy the text above');
-            }
-            
-            document.body.removeChild(textArea);
-        }
-
-        // Show copy feedback
-        function showCopyFeedback(message) {
-            const copyButtons = document.querySelectorAll('.copy-button');
-            const originalText = copyButtons[0].textContent;
-            
-            copyButtons[0].textContent = message;
-            copyButtons[0].style.background = '#98FB98';
-            
-            setTimeout(() => {
-                copyButtons[0].textContent = originalText;
-                copyButtons[0].style.background = '#90EE90';
-            }, 2000);
-        }
-
-        // Open email client with pre-filled content
-        function openEmailClient() {
-            const emailContent = document.getElementById('emailContent').textContent;
-            const lines = emailContent.split('\n');
-            const subject = lines[0].replace('Subject: ', '');
-            const body = lines.slice(2).join('\n'); // Skip subject and empty line
-            
-            const mailtoLink = `mailto:reiambrade@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-            
-            // Try to open email client
-            window.location.href = mailtoLink;
-        }
 
         // Add some interactive elements
         document.addEventListener('mousemove', (e) => {
@@ -834,3 +792,6 @@ ${data.name}`;
                 heroQuestionMark.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
             }
         });
+    </script>
+</body>
+</html>
