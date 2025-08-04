@@ -1,12 +1,8 @@
 {
-  "name": "rogue-knowledge-website",
+  "name": "rogue-knowledge",
   "version": "1.0.0",
-  "description": "Rogue Knowledge website with contact form",
+  "private": true,
   "dependencies": {
     "nodemailer": "^6.9.7"
-  },
-  "scripts": {
-    "dev": "vercel dev",
-    "build": "echo 'No build needed for static site'"
   }
 }
