@@ -24,7 +24,7 @@ export default async function handler(req, res) {
 
     // Create email content
     const currentDate = new Date().toLocaleDateString();
-    const emailContent = `
+    const emailText = `
 New Rogue Knowledge Question Submission
 
 📝 CONTACT INFO:
@@ -45,26 +45,27 @@ ${whyCurious || 'Not specified'}
 Sent via Rogue Knowledge website form
     `.trim();
 
-    // Use nodemailer with Gmail SMTP
-    const nodemailer = await import('nodemailer');
-    
-    const transporter = nodemailer.default.createTransporter({
-      service: 'gmail',
-      auth: {
-        user: process.env.EMAIL_USER, // Your Gmail
-        pass: process.env.EMAIL_PASS  // Your Gmail App Password
-      }
+    // Send email using Resend
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: 'Rogue Knowledge <onboarding@resend.dev>',
+        to: ['reiambrade@gmail.com'],
+        subject: `New Rogue Knowledge Question: ${topicType || 'General Inquiry'}`,
+        text: emailText,
+        reply_to: email
+      }),
     });
 
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: 'reiambrade@gmail.com',
-      subject: `New Rogue Knowledge Question: ${topicType || 'General Inquiry'}`,
-      text: emailContent,
-      replyTo: email
-    };
+    const result = await response.json();
 
-    await transporter.sendMail(mailOptions);
+    if (!response.ok) {
+      throw new Error(result.message || 'Failed to send email via Resend');
+    }
 
     res.status(200).json({ 
       success: true, 
