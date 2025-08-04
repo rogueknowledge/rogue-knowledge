@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rogue Knowledge - The Questions That Keep You Up At Night</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #FFD700;
+            background: #043927;
+            overflow-x: hidden;
+        }
+
+        /* Background pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 25% 25%, rgba(255, 215, 0, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(255, 215, 0, 0.02) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        /* Fixed Header */
+        .site-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            background: rgba(4, 57, 39, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .header-logo {
+            width: 60px;
+            height: 60px;
+        }
+
+        .header-logo svg {
+            width: 100%;
+            height: 100%;
+            animation: logoFloat 4s ease-in-out infinite;
+        }
+
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            25% { transform: translateY(-3px) rotate(1deg); }
+            50% { transform: translateY(-5px) rotate(0deg); }
+            75% { transform: translateY(-2px) rotate(-1deg); }
+        }
+
+        .header-logo .question-mark-path {
+            animation: questionPulse 3s ease-in-out infinite;
+        }
+
+        .header-logo .burst-lines {
+            animation: burstRotate 8s linear infinite;
+        }
+
+        .header-logo .knowledge-nodes {
+            animation: nodesPulse 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes questionPulse {
+            0%, 100% { stroke-width: 8; filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.3)); }
+            50% { stroke-width: 10; filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.6)); }
+        }
+
+        @keyframes burstRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes nodesPulse {
+            0% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+
+        /* Hero Logo */
+        .hero-logo {
+            width: 400px;
+            height: 400px;
+            margin: 0 auto 3rem;
+            position: relative;
+        }
+
+        .hero-logo svg {
+            width: 100%;
+            height: 100%;
+            animation: heroLogoFloat 4s ease-in-out infinite;
+        }
+
+        @keyframes heroLogoFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            25% { transform: translateY(-8px) rotate(1deg); }
+            50% { transform: translateY(-12px) rotate(0deg); }
+            75% { transform: translateY(-4px) rotate(-1deg); }
+        }
+
+        .hero-logo .hero-question-mark-path {
+            animation: heroQuestionPulse 3s ease-in-out infinite;
+        }
+
+        .hero-logo .hero-burst-lines {
+            animation: heroBurstRotate 8s linear infinite;
+        }
+
+        .hero-logo .hero-knowledge-nodes {
+            animation: heroNodesPulse 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes heroQuestionPulse {
+            0%, 100% { stroke-width: 8; filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.3)); }
+            50% { stroke-width: 10; filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.6)); }
+        }
+
+        @keyframes heroBurstRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes heroNodesPulse {
+            0% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+
+        header {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, #043927 0%, #065f46 50%, #043927 100%);
+            margin-top: 80px;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            z-index: 2;
+        }
+
+        h1 {
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 900;
+            margin-bottom: 1rem;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            letter-spacing: -2px;
+        }
+
+        .tagline {
+            font-size: clamp(1.2rem, 3vw, 2rem);
+            margin-bottom: 2rem;
+            font-style: italic;
+            color: #FFFF88;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .description {
+            font-size: clamp(1rem, 2.5vw, 1.5rem);
+            margin-bottom: 3rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: #FFD700;
+            color: #043927;
+            padding: 1rem 2rem;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+            background: #FFFF88;
+        }
+
+        /* Content sections */
+        section {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h2 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            margin-bottom: 2rem;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            background: rgba(255, 215, 0, 0.1);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 2px solid rgba(255, 215, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 215, 0, 0.4);
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.1);
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #FFFF88;
+        }
+
+        /* Contact form */
+        .contact-section {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 2rem auto;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #FFFF88;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 10px;
+            background: rgba(255, 215, 0, 0.1);
+            color: #FFD700;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #FFD700;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: rgba(255, 215, 0, 0.6);
+        }
+
+        .submit-btn {
+            background: #FFD700;
+            color: #043927;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+            background: #FFFF88;
+        }
+
+        /* Success message */
+        .success-message {
+            background: rgba(0, 255, 0, 0.1);
+            border: 2px solid rgba(0, 255, 0, 0.3);
+            color: #90EE90;
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 2rem 0;
+            text-align: center;
+            display: none;
+        }
+
+        .success-message h3 {
+            margin-bottom: 1rem;
+            color: #90EE90;
+        }
+
+        .copy-button {
+            background: #90EE90;
+            color: #043927;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .copy-button:hover {
+            transform: translateY(-1px);
+            background: #98FB98;
+        }
+
+        .email-content {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            font-family: monospace;
+            font-size: 0.9rem;
+            text-align: left;
+            white-space: pre-line;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid rgba(255, 215, 0, 0.2);
+            margin-top: 4rem;
+        }
+
+        /* Decorative elements */
+        .floating-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .floating-question {
+            position: absolute;
+            color: rgba(255, 215, 0, 0.1);
+            font-size: 4rem;
+            font-weight: 900;
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); }
+            100% { transform: translateY(-100px) rotate(360deg); }
+        }
+
+        .floating-question:nth-child(1) { left: 10%; animation-delay: 0s; }
+        .floating-question:nth-child(2) { left: 80%; animation-delay: -5s; }
+        .floating-question:nth-child(3) { left: 50%; animation-delay: -10s; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .site-header {
+                padding: 0.5rem 1rem;
+            }
+            
+            .header-logo {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .hero-logo {
+                width: 320px;
+                height: 320px;
+                margin-bottom: 2rem;
+            }
+            
+            header {
+                margin-top: 70px;
+            }
+            
+            .hero-content {
+                padding: 1rem;
+            }
+            
+            section {
+                padding: 2rem 1rem;
+            }
+            
+            .contact-section {
+                padding: 2rem 1rem;
+                margin: 2rem 1rem;
+            }
+            
+            .contact-form {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Fixed Header with Animated Logo -->
+    <div class="site-header">
+        <div class="header-logo">
+            <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                        <feMerge> 
+                            <feMergeNode in="coloredBlur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+                        <feDropShadow dx="4" dy="4" stdDeviation="3" flood-color="#000000" flood-opacity="0.4"/>
+                    </filter>
+                </defs>
+                
+                <!-- Large stylized question mark - shifted left -->
+                <g transform="translate(150, 150)" filter="url(#shadow)">
+                    <path class="question-mark-path" d="M-35 -50 C-35 -70, -20 -85, 5 -85 C30 -85, 45 -70, 45 -50 C45 -30, 30 -25, 15 -15 C5 -8, 2 -2, 2 10 L2 25 M2 45 L2 52" 
+                          stroke="#FFD700" stroke-width="8" fill="none" stroke-linecap="round"/>
+                    
+                    <!-- Inner highlight for dimension -->
+                    <path d="M-25 -50 C-25 -62, -15 -72, 5 -72 C25 -72, 35 -62, 35 -50 C35 -38, 25 -35, 18 -28" 
+                          stroke="#FFFF88" stroke-width="3" fill="none" stroke-linecap="round"/>
+                    
+                    <!-- Dynamic radiating elements -->
+                    <g class="burst-lines" opacity="0.8" transform-origin="0 0">
+                        <!-- Burst lines -->
+                        <line x1="-55" y1="-35" x2="-70" y2="-50" stroke="#FFD700" stroke-width="4" stroke-linecap="round"/>
+                        <line x1="-50" y1="10" x2="-65" y2="25" stroke="#FFD700" stroke-width="3" stroke-linecap="round"/>
+                        <line x1="65" y1="-40" x2="80" y2="-55" stroke="#FFD700" stroke-width="4" stroke-linecap="round"/>
+                        <line x1="60" y1="5" x2="75" y2="20" stroke="#FFD700" stroke-width="3" stroke-linecap="round"/>
+                    </g>
+                    
+                    <!-- Knowledge nodes -->
+                    <g class="knowledge-nodes">
+                        <circle cx="-75" cy="-55" r="5" fill="#FFD700"/>
+                        <rect x="-70" y="20" width="10" height="10" fill="#FFD700" transform="rotate(45 -65 25)"/>
+                        <polygon points="85,-60 95,-65 95,-55" fill="#FFD700"/>
+                        <circle cx="80" cy="25" r="4" fill="#FFFF88"/>
+                    </g>
+                </g>
+                
+                <!-- Title text -->
+                <text y="235" text-anchor="middle" x="150" font-family="Arial Black, sans-serif" 
+                      font-size="28" font-weight="900" fill="#FFD700" letter-spacing="-1px" 
+                      filter="url(#glow)">ROGUE</text>
+                
+                <!-- Accent line -->
+                <rect x="80" y="245" width="140" height="3" fill="#FFD700"/>
+                
+                <!-- Subtitle -->
+                <text y="270" text-anchor="middle" x="150" font-family="Arial, sans-serif" 
+                      font-size="14" font-weight="400" fill="#FFD700" letter-spacing="3px">KNOWLEDGE</text>
+            </svg>
+        </div>
+    </div>
+
+    <!-- Floating decorative elements -->
+    <div class="floating-elements">
+        <div class="floating-question">?</div>
+        <div class="floating-question">?</div>
+        <div class="floating-question">?</div>
+    </div>
+
+    <header>
+        <div class="hero-content">
+            <div class="hero-logo">
+                <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <filter id="hero-glow" x="-50%" y="-50%" width="200%" height="200%">
+                            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                            <feMerge> 
+                                <feMergeNode in="coloredBlur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+                        <filter id="hero-shadow" x="-50%" y="-50%" width="200%" height="200%">
+                            <feDropShadow dx="4" dy="4" stdDeviation="3" flood-color="#000000" flood-opacity="0.4"/>
+                        </filter>
+                    </defs>
+                    
+                    <!-- Large stylized question mark - shifted left -->
+                    <g transform="translate(150, 150)" filter="url(#hero-shadow)">
+                        <path class="hero-question-mark-path" d="M-35 -50 C-35 -70, -20 -85, 5 -85 C30 -85, 45 -70, 45 -50 C45 -30, 30 -25, 15 -15 C5 -8, 2 -2, 2 10 L2 25 M2 45 L2 52" 
+                              stroke="#FFD700" stroke-width="8" fill="none" stroke-linecap="round"/>
+                        
+                        <!-- Inner highlight for dimension -->
+                        <path d="M-25 -50 C-25 -62, -15 -72, 5 -72 C25 -72, 35 -62, 35 -50 C35 -38, 25 -35, 18 -28" 
+                              stroke="#FFFF88" stroke-width="3" fill="none" stroke-linecap="round"/>
+                        
+                        <!-- Dynamic radiating elements -->
+                        <g class="hero-burst-lines" opacity="0.8" transform-origin="0 0">
+                            <!-- Burst lines -->
+                            <line x1="-55" y1="-35" x2="-70" y2="-50" stroke="#FFD700" stroke-width="4" stroke-linecap="round"/>
+                            <line x1="-50" y1="10" x2="-65" y2="25" stroke="#FFD700" stroke-width="3" stroke-linecap="round"/>
+                            <line x1="65" y1="-40" x2="80" y2="-55" stroke="#FFD700" stroke-width="4" stroke-linecap="round"/>
+                            <line x1="60" y1="5" x2="75" y2="20" stroke="#FFD700" stroke-width="3" stroke-linecap="round"/>
+                        </g>
+                        
+                        <!-- Knowledge nodes -->
+                        <g class="hero-knowledge-nodes">
+                            <circle cx="-75" cy="-55" r="5" fill="#FFD700"/>
+                            <rect x="-70" y="20" width="10" height="10" fill="#FFD700" transform="rotate(45 -65 25)"/>
+                            <polygon points="85,-60 95,-65 95,-55" fill="#FFD700"/>
+                            <circle cx="80" cy="25" r="4" fill="#FFFF88"/>
+                        </g>
+                    </g>
+                    
+                    <!-- Title text -->
+                    <text y="235" text-anchor="middle" x="150" font-family="Arial Black, sans-serif" 
+                          font-size="28" font-weight="900" fill="#FFD700" letter-spacing="-1px" 
+                          filter="url(#hero-glow)">ROGUE</text>
+                    
+                    <!-- Accent line -->
+                    <rect x="80" y="245" width="140" height="3" fill="#FFD700"/>
+                    
+                    <!-- Subtitle -->
+                    <text y="270" text-anchor="middle" x="150" font-family="Arial, sans-serif" 
+                          font-size="14" font-weight="400" fill="#FFD700" letter-spacing="3px">KNOWLEDGE</text>
+                </svg>
+            </div>
+            <p class="tagline">The questions that keep you up at night</p>
+            <p class="description">
+                Deep dives into weird internet phenomena, cultural mysteries, and the trends nobody saw coming. 
+                I'm the kind of person who gets stuck on random questions and can't stop thinking about them until I understand why.
+            </p>
+            <a href="#contact" class="cta-button">Suggest a Topic</a>
+        </div>
+    </header>
+
+    <section id="about">
+        <h2>Why I Started This</h2>
+        <div style="max-width: 800px; margin: 0 auto 3rem; text-align: center; font-size: 1.1rem; line-height: 1.8;">
+            <p style="margin-bottom: 1.5rem;">
+                I've always been that person who goes down rabbit holes at 3 AM trying to understand why something works the way it does. 
+                You know that feeling when you notice something weird about the world and it just won't leave your brain alone? That's me, constantly.
+            </p>
+            <p style="margin-bottom: 1.5rem;">
+                I started <strong>Rogue Knowledge</strong> because I realized I wasn't the only one with this obsessive curiosity about random stuff. 
+                There are questions out there that deserve answers, trends that need explaining, and internet phenomena that are just begging to be understood.
+            </p>
+            <p style="margin-bottom: 1.5rem; font-style: italic; color: #FFFF88;">
+                <strong>Fun fact:</strong> The name "Rogue Knowledge" isn't just about going off the beaten path - 
+                it's actually based on my initials, R.K. Sometimes the best ideas are hiding right in front of you! 
+                But honestly, I might explore anything that catches my curiosity, so who knows where this channel will take us.
+            </p>
+        </div>
+        
+        <h2 style="margin-top: 4rem;">What I Explore</h2>
+        <div class="about-grid">
+            <div class="feature-card">
+                <h3>🌐 Internet Mysteries</h3>
+                <p>From viral trends that came out of nowhere to the weird corners of online culture that somehow shape our world.</p>
+            </div>
+            <div class="feature-card">
+                <h3>🧠 Cultural Shifts</h3>
+                <p>Those subtle changes in society that you notice but can't quite explain. Why did everyone suddenly start doing that thing?</p>
+            </div>
+            <div class="feature-card">
+                <h3>❓ Random Questions</h3>
+                <p>The burning questions that pop into your head at 2 AM and refuse to let you sleep until you find answers.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="contact-section">
+        <h2>Got a Question That Won't Let Go?</h2>
+        <p style="text-align: center; margin-bottom: 2rem; font-size: 1.1rem;">
+            Drop me a line and let me know what you want me to dive into next. I love tackling the questions that keep people curious.
+        </p>
+        
+        <form class="contact-form" id="contactForm">
+            <div class="form-group">
+                <label for="name">Your Name</label>
+                <input type="text" id="name" name="name" placeholder="What should I call you?" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="your.email@example.com" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="topic-type">What kind of mystery is this?</label>
+                <select id="topic-type" name="topic-type">
+                    <option value="">Choose a category...</option>
+                    <option value="internet-culture">Internet Culture & Trends</option>
+                    <option value="social-phenomena">Social Phenomena</option>
+                    <option value="random-question">Random Question</option>
+                    <option value="cultural-shift">Cultural Shift</option>
+                    <option value="other">Something Else Entirely</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="question">Your Question/Topic</label>
+                <textarea id="question" name="question" rows="6" placeholder="Tell me about the question that's been bugging you, the trend you've noticed, or the weird internet thing you want explained..." required></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="why-curious">Why are you curious about this?</label>
+                <textarea id="why-curious" name="why-curious" rows="3" placeholder="What made you notice this? Why can't you let it go? (This helps me understand the angle to take)"></textarea>
+            </div>
+            
+            <button type="submit" class="submit-btn">Send My Question</button>
+        </form>
+
+        <div class="success-message" id="successMessage">
+            <h3>📧 Your Message is Ready!</h3>
+            <p>Here's your formatted message. You can copy it and send it to me:</p>
+            
+            <div class="email-content" id="emailContent"></div>
+            
+            <button class="copy-button" onclick="copyEmailContent()">📋 Copy Message</button>
+            <button class="copy-button" onclick="openEmailClient()">📬 Open Email Client</button>
+            
+            <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.8;">
+                You can also manually copy the content above and paste it into your preferred email client.
+            </p>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 Rogue Knowledge. Questions answered, mysteries explored.</p>
+        <p style="margin-top: 1rem; opacity: 0.7;">
+            <a href="https://youtube.com/@rogueknowledge" style="color: #FFD700; text-decoration: none;">YouTube</a> • 
+            <a href="mailto:reiambrade@gmail.com" style="color: #FFD700; text-decoration: none;">Contact</a>
+        </p>
+    </footer>
+
+    <script>
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Form submission handler
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const formData = new FormData(e.target);
+            const data = {};
+            for (let [key, value] of formData.entries()) {
+                data[key] = value;
+            }
+            
+            // Generate email content
+            const emailSubject = `New Rogue Knowledge Question: ${data['topic-type'] || 'General Inquiry'}`;
+            const emailBody = generateEmailBody(data);
+            
+            // Display success message with email content
+            document.getElementById('emailContent').textContent = emailBody;
+            document.getElementById('successMessage').style.display = 'block';
+            
+            // Scroll to success message
+            document.getElementById('successMessage').scrollIntoView({ behavior: 'smooth' });
+            
+            // Update button text
+            const submitBtn = e.target.querySelector('.submit-btn');
+            submitBtn.textContent = 'Message Ready!';
+            setTimeout(() => {
+                submitBtn.textContent = 'Send My Question';
+            }, 3000);
+        });
+
+        // Generate email body function
+        function generateEmailBody(data) {
+            const currentDate = new Date().toLocaleDateString();
+            
+            let emailBody = `Subject: New Rogue Knowledge Question: ${data['topic-type'] || 'General Inquiry'}
+
+Hi there!
+
+I have a question/topic suggestion for Rogue Knowledge that I'd love for you to explore:
+
+📝 CONTACT INFO:
+Name: ${data.name}
+Email: ${data.email}
+Date: ${currentDate}
+
+🔍 QUESTION CATEGORY: 
+${data['topic-type'] || 'Not specified'}
+
+❓ MY QUESTION/TOPIC:
+${data.question}
+
+🤔 WHY I'M CURIOUS:
+${data['why-curious'] || 'Not specified'}
+
+---
+
+Looking forward to seeing if this sparks your curiosity too!
+
+Best regards,
+${data.name}`;
+            
+            return emailBody;
+        }
+
+        // Copy email content to clipboard
+        function copyEmailContent() {
+            const emailContent = document.getElementById('emailContent').textContent;
+            
+            if (navigator.clipboard && window.isSecureContext) {
+                // Use modern clipboard API
+                navigator.clipboard.writeText(emailContent).then(() => {
+                    showCopyFeedback('📋 Copied to clipboard!');
+                }).catch(() => {
+                    fallbackCopyTextToClipboard(emailContent);
+                });
+            } else {
+                // Fallback for older browsers
+                fallbackCopyTextToClipboard(emailContent);
+            }
+        }
+
+        // Fallback copy method
+        function fallbackCopyTextToClipboard(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed";
+            textArea.style.left = "-999999px";
+            textArea.style.top = "-999999px";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+                showCopyFeedback('📋 Copied to clipboard!');
+            } catch (err) {
+                showCopyFeedback('❌ Please manually copy the text above');
+            }
+            
+            document.body.removeChild(textArea);
+        }
+
+        // Show copy feedback
+        function showCopyFeedback(message) {
+            const copyButtons = document.querySelectorAll('.copy-button');
+            const originalText = copyButtons[0].textContent;
+            
+            copyButtons[0].textContent = message;
+            copyButtons[0].style.background = '#98FB98';
+            
+            setTimeout(() => {
+                copyButtons[0].textContent = originalText;
+                copyButtons[0].style.background = '#90EE90';
+            }, 2000);
+        }
+
+        // Open email client with pre-filled content
+        function openEmailClient() {
+            const emailContent = document.getElementById('emailContent').textContent;
+            const lines = emailContent.split('\n');
+            const subject = lines[0].replace('Subject: ', '');
+            const body = lines.slice(2).join('\n'); // Skip subject and empty line
+            
+            const mailtoLink = `mailto:reiambrade@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            
+            // Try to open email client
+            window.location.href = mailtoLink;
+        }
+
+        // Add some interactive elements
+        document.addEventListener('mousemove', (e) => {
+            // Header logo interaction
+            const headerQuestionMark = document.querySelector('.header-logo .question-mark-path');
+            if (headerQuestionMark) {
+                const rect = headerQuestionMark.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                
+                const deltaX = (e.clientX - centerX) * 0.002;
+                const deltaY = (e.clientY - centerY) * 0.002;
+                
+                headerQuestionMark.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+            }
+            
+            // Hero logo interaction
+            const heroQuestionMark = document.querySelector('.hero-logo .hero-question-mark-path');
+            if (heroQuestionMark) {
+                const rect = heroQuestionMark.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                
+                const deltaX = (e.clientX - centerX) * 0.003;
+                const deltaY = (e.clientY - centerY) * 0.003;
+                
+                heroQuestionMark.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+            }
+        });
